@@ -2,10 +2,13 @@ package com.example.tictactoeapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,10 +49,108 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             buttons[i].setOnClickListener(this);
 
         }
+
+        roundCount = 0;
+        playerOneScoreCount = 0;
+        playerTwoScoreCount = 0;
+        activePlayer = true;
+
+
     }
 
     @Override
     public void onClick(View v) {
+        //Log.i("test","button is clicked!");
+        if(!((Button)v).getText().toString().equals("")){
 
+            return;
+
+        }
+        String buttonID = v.getResources().getResourceEntryName(v.getId());
+        int gameStatePointer = Integer.parseInt(buttonID.substring(buttonID.length()-1, buttonID.length()));
+
+        if(activePlayer){
+            ((Button)v).setText("X");
+            ((Button)v).setTextColor(Color.parseColor("#FFC34A"));
+            gameState[gameStatePointer] = 0;
+        } else {
+            ((Button)v).setText("O");
+            ((Button)v).setTextColor(Color.parseColor("#70FFEA"));
+            gameState[gameStatePointer] = 1;
+        }
+        roundCount++;
+
+        if(checkWinner()){
+            if(activePlayer){
+                playerOneScoreCount++;
+                updatePlayerScore();
+                Toast.makeText(this, "Player One Won!", Toast.LENGTH_SHORT).show();
+                PlayAgain();
+            }else {
+                playerTwoScoreCount++;
+                updatePlayerScore();
+                Toast.makeText(this, "Player Two Won!", Toast.LENGTH_SHORT).show();
+                PlayAgain();
+            }
+
+        }else if(roundCount==9){
+            PlayAgain();
+            Toast.makeText(this, "No Winner!", Toast.LENGTH_SHORT).show();
+
+        }else {
+            activePlayer = !activePlayer;
+        }
+
+        if(playerOneScoreCount > playerTwoScoreCount ){
+            playerStatus.setText("Player One is Winning!");
+        }else if (playerTwoScoreCount > playerOneScoreCount){
+            playerStatus.setText("Player Two is Winning!");
+        }else{
+            playerStatus.setText("");
+        }
+
+        resetGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlayAgain();
+                playerOneScoreCount = 0;
+                playerTwoScoreCount = 0;
+                playerStatus.setText("");
+                updatePlayerScore();
+            }
+        });
+
+
+
+    }
+
+    public boolean checkWinner(){
+        boolean winnerResult = false;
+
+        for(int[] winningPosition : winningPositions){
+            if (gameState[winningPosition[0]] == gameState[winningPosition[1]] &&
+                    gameState[winningPosition[1]] == gameState[winningPosition[2]] &&
+                    gameState[winningPosition[0]] !=2) {
+                winnerResult = true;
+
+            }
+        }
+        return winnerResult;
+    }
+
+    public void updatePlayerScore(){
+        playerOneScore.setText(Integer.toString(playerOneScoreCount));
+        playerTwoScore.setText(Integer.toString(playerTwoScoreCount));
+    }
+
+    public void PlayAgain(){
+        roundCount = 0;
+        activePlayer = true;
+
+        for(int i= 0 ; i< buttons.length; i++){
+            gameState[i] = 2;
+            buttons[i].setText("");
+
+        }
     }
 }
