@@ -1,7 +1,9 @@
 package com.example.tictactoeapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,11 +12,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView playerOneScore, playerTwoScore, playerStatus;
     private Button [] buttons = new Button[9];
     private Button resetGame;
+    LottieAnimationView lottieAnimationView;
 
     private int playerOneScoreCount, playerTwoScoreCount, roundCount;
     boolean activePlayer;
@@ -38,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerOneScore = (TextView) findViewById(R.id.playerOneScore);
         playerTwoScore = (TextView) findViewById(R.id.playerTwoScore);
         playerStatus = (TextView) findViewById(R.id.playerStatus);
-
+        lottieAnimationView = findViewById(R.id.animation);
         resetGame = (Button) findViewById(R.id.resetGame);
+        lottieAnimationView.setRepeatCount(1);
 
         for(int i= 0; i<buttons.length; i++){
 
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             buttons[i].setOnClickListener(this);
 
         }
-
+        playerStatus.setText("");
         roundCount = 0;
         playerOneScoreCount = 0;
         playerTwoScoreCount = 0;
@@ -71,11 +77,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(activePlayer){
             ((Button)v).setText("X");
-            ((Button)v).setTextColor(Color.parseColor("#FFC34A"));
+            ((Button)v).setTextColor(Color.parseColor("#ff1100"));
             gameState[gameStatePointer] = 0;
         } else {
             ((Button)v).setText("O");
-            ((Button)v).setTextColor(Color.parseColor("#70FFEA"));
+            ((Button)v).setTextColor(Color.parseColor("#ffffff"));
             gameState[gameStatePointer] = 1;
         }
         roundCount++;
@@ -84,12 +90,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(activePlayer){
                 playerOneScoreCount++;
                 updatePlayerScore();
-                Toast.makeText(this, "Player One Won!", Toast.LENGTH_SHORT).show();
+                lottieAnimationView.playAnimation();
+                Toast.makeText(this, "Player One Won(X)!", Toast.LENGTH_SHORT).show();
                 PlayAgain();
             }else {
                 playerTwoScoreCount++;
                 updatePlayerScore();
-                Toast.makeText(this, "Player Two Won!", Toast.LENGTH_SHORT).show();
+                lottieAnimationView.playAnimation();
+                Toast.makeText(this, "Player Two Won(O)!", Toast.LENGTH_SHORT).show();
                 PlayAgain();
             }
 
@@ -102,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(playerOneScoreCount > playerTwoScoreCount ){
-            playerStatus.setText("Player One is Winning!");
+            playerStatus.setText("Player One is Leading!");
         }else if (playerTwoScoreCount > playerOneScoreCount){
-            playerStatus.setText("Player Two is Winning!");
+            playerStatus.setText("Player Two is Leading!");
         }else{
             playerStatus.setText("");
         }
@@ -117,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 playerTwoScoreCount = 0;
                 playerStatus.setText("");
                 updatePlayerScore();
+                if(lottieAnimationView.isAnimating()){
+                    lottieAnimationView.cancelAnimation();
+                }
             }
         });
 
