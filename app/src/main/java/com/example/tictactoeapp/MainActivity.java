@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button [] buttons = new Button[9];
     private Button resetGame;
     LottieAnimationView lottieAnimationView;
-
     private int playerOneScoreCount, playerTwoScoreCount, roundCount;
     boolean activePlayer;
 
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lottieAnimationView = findViewById(R.id.animation);
         resetGame = (Button) findViewById(R.id.resetGame);
         lottieAnimationView.setRepeatCount(1);
-
         for(int i= 0; i<buttons.length; i++){
 
             String buttonID = "btn_" + i;
@@ -92,12 +90,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 updatePlayerScore();
                 lottieAnimationView.playAnimation();
                 Toast.makeText(this, "Player One Won(X)!", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setCancelable(true);
+                builder.setTitle("We Have A Winner!!!");
+                builder.setMessage("Player One (X) Won!");
+                builder.setNegativeButton("Play Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
                 PlayAgain();
             }else {
                 playerTwoScoreCount++;
                 updatePlayerScore();
                 lottieAnimationView.playAnimation();
                 Toast.makeText(this, "Player Two Won(O)!", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setCancelable(true);
+                builder.setTitle("We Have A Winner!!!");
+                builder.setMessage("Player Two (O) Won!");
+                builder.setNegativeButton("Play Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
                 PlayAgain();
             }
 
